@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Redis;
-
 class TokenAuth
 {
     /**
@@ -23,15 +22,15 @@ class TokenAuth
         }
 
         // 解码
-        $decode = base64_decode($tokenString);
+        $decode = base64_decode(explode('.', $tokenString)[1]);
         // 获取token中的用户id
-        $userId = explode(',',$decode)[0];
+        $userId = json_decode($decode)->sub;
         //判断token是否在缓存中
-        $redisKey = 'USER_TOKEN_STORE_KEY'.$userId;
-        if(Redis::exists($redisKey)){
-            dd('存在');
+        $redisKey = 'USER_TOKEN_STORE_KEY' . $userId;
+        if (Redis::exists($redisKey)) {
+            return $next($request);
+        }else {
+            return response()->json(['msg' => 'token无效', 'status' => '422'], 422);
         }
-
-        return $next($request);
     }
 }

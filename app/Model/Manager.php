@@ -15,6 +15,8 @@ class Manager extends Authenticatable implements JWTSubject
         'username', 'password',
     ];
 
+    public $incrementing = true;
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

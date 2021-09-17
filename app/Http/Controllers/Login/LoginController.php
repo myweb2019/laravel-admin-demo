@@ -48,7 +48,7 @@ class LoginController extends Controller
         // 判断Redis中是否存在
         if (Redis::exists($userTokenKey)) {
             $result = Redis::get($userTokenKey);
-            return Helper::sendSuccessJson($result);
+            return Helper::sendSuccessJson(json_decode($result));
         } else {
             // 通过JWT验证用户，通过则返回token
             if (!$token = JWTAuth::fromUser($user)) {
@@ -73,23 +73,5 @@ class LoginController extends Controller
             Redis::setex($userTokenKey, $expires_in * 60, json_encode($data, JSON_UNESCAPED_UNICODE));
             return Helper::sendSuccessJson($data);
         }
-  
-
-        // return Helper::sendSuccessJson([
-        //     'access_token' => $token,
-        //     'token_type' => 'Bearer',
-        //     'expires_in' => 3600 * 2
-        // ]);
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json();
-    }
-
-    public function getUserlist()
-    {
-        $user = Manager::all();
-        $this->sendSuccessJson($user->toArray());
     }
 }
